@@ -8,7 +8,7 @@ from mmdet.models.builder import LOSSES
 @weighted_loss
 def dice_loss(input, target,mask=None,eps=0.001):
     N,H,W = input.shape
-    
+
     input = input.contiguous().view(N, H*W)
     target = target.contiguous().view(N, H*W).float()
     if mask is not None:
@@ -21,7 +21,7 @@ def dice_loss(input, target,mask=None,eps=0.001):
     d = (2 * a) / (b + c)
     return 1 - d
 
-@LOSSES.register_module()
+@LOSSES.register_module(force=True)
 class DiceLoss(nn.Module):
 
     def __init__(self, eps=1e-6, reduction='mean', loss_weight=1.0):

@@ -193,7 +193,7 @@ def _get_future_traj_info(nusc, sample, predict_steps=16):
             # trans = box.center
             # trans = np.array([0, 0, 0])
             # rot = Quaternion(matrix=box.rotation_matrix)
-            # fut_traj_scence_centric = convert_local_coords_to_global(fut_traj_local, trans, rot)  
+            # fut_traj_scence_centric = convert_local_coords_to_global(fut_traj_local, trans, rot)
             fut_traj_scence_centric = fut_traj_local
             fut_traj[:fut_traj_scence_centric.shape[0], :] = fut_traj_scence_centric
             fut_traj_valid_mask[:fut_traj_scence_centric.shape[0], :] = 1
@@ -393,9 +393,12 @@ def obtain_sensor2top(nusc,
     cs_record = nusc.get('calibrated_sensor',
                          sd_rec['calibrated_sensor_token'])
     pose_record = nusc.get('ego_pose', sd_rec['ego_pose_token'])
+    nusc_dataroot = nusc.dataroot
+    nusc.dataroot = ''
     data_path = str(nusc.get_sample_data_path(sd_rec['token']))
     if os.getcwd() in data_path:  # path from lyftdataset is absolute path
         data_path = data_path.split(f'{os.getcwd()}/')[-1]  # relative path
+    nusc.dataroot = nusc_dataroot
     sweep = {
         'data_path': data_path,
         'type': sensor_type,
@@ -462,10 +465,13 @@ def export_2d_annotation(root_path, info_path, version, mono3d=True):
                 cam_info['sample_data_token'],
                 visibilities=['', '1', '2', '3', '4'],
                 mono3d=mono3d)
-            (height, width, _) = mmcv.imread(cam_info['data_path']).shape
+            # (height, width, _) = mmcv.imread(cam_info['data_path']).shape
+            cam_info_datapath = os.path.join(root_path, cam_info['data_path'])
+            (height, width, _) = mmcv.imread(cam_info_datapath).shape
             coco_2d_dict['images'].append(
                 dict(
-                    file_name=cam_info['data_path'].split('data/nuscenes/')
+                    # file_name=cam_info['data_path'].split('data/nuscenes/')
+                    file_name=cam_info_datapath.split('data/nuscenes/')
                     [-1],
                     id=cam_info['sample_data_token'],
                     token=info['token'],
@@ -718,4 +724,3 @@ def generate_record(ann_rec: dict, x1: float, y1: float, x2: float, y2: float,
     coco_rec['iscrowd'] = 0
 
     return coco_rec
-    
