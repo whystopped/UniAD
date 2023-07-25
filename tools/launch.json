@@ -1,0 +1,70 @@
+{
+    // 使用 IntelliSense 了解相关属性。
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "launch",
+            "type": "python",
+            "request": "launch",
+            "program": "tools/test.py",
+            "console": "integratedTerminal",
+            "logToFile": true,
+            "args": [
+                "projects/configs/stage1_track_map/base_track_map.py",
+                "ckpts/uniad_base_track_map.pth",
+                "--show-dir",
+                "/mnt/hdmapnet-dataset/wuchengxi/projects/uniad/torch_debug/",
+                "--cfg-options",
+                "data.test.samples_per_gpu=1",
+                "data.workers_per_gpu=2",
+                "--eval",
+                "bbox",
+                "--deterministic",
+                // "--fuse-conv-bn"
+            ],
+            "env": {
+                "PYTHONPATH": "/home/jovyan/workspace/envs/hdmapnet/UniAD",
+                // "CUDA_VISIBLE_DEVICES": "0,1,2,3,4,5,6,7"
+                "CUDA_VISIBLE_DEVICES": "0"
+            },
+            "justMyCode": false
+        },
+        {
+            "name": "distributed launch",
+            "type": "python",
+            "request": "launch",
+            "module": "torch.distributed.launch",
+            "console": "integratedTerminal",
+            "logToFile": true,
+            "args": [
+                "--nproc_per_node",
+                // "8",
+                "1",
+                "--master_port",
+                "29506",
+                "tools/test.py",
+                "projects/configs/stage1_track_map/base_track_map.py",
+                "ckpts/uniad_base_track_map.pth",
+                "--launcher",
+                "pytorch",
+                "--show-dir",
+                "/mnt/hdmapnet-dataset/wuchengxi/projects/uniad/torch_debug/",
+                "--cfg-options",
+                "data.test.samples_per_gpu=1",
+                "data.workers_per_gpu=2",
+                "--eval",
+                "bbox",
+                "--deterministic",
+                // "--fuse-conv-bn"
+            ],
+            "env": {
+                "PYTHONPATH": "/home/jovyan/workspace/envs/hdmapnet/UniAD",
+                // "CUDA_VISIBLE_DEVICES": "0,1,2,3,4,5,6,7"
+                "CUDA_VISIBLE_DEVICES": "0"
+            },
+            "justMyCode": false
+        },
+    ]
+}
